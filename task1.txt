@@ -1,0 +1,71 @@
+=====================================================================================================================
+ERROR SCENARIOS
+=====================================================================================================================
+1. An ARP Request/Response being unicasted to a certain device instead of being broadcasted.
+
+Ether(src= 'BB:B4:C8:08:92:8E', dst= '32:2F:6B:F6:B0:51') /
+ARP(op=1, psrc='192.168.1.16', pdst='192.168.1.25', hwsrc='CF:62:43:C0:AC:E3', hwdst='FF:FF:FF:FF:FF:FF')
+
+Here a packet is being unicasted but in the arp layer its spuriosuly marked as being sent to a broadcast
+
+2. Broadcast request sent by a device with the source ip being spoofed, thereby directing replies to the wrong device.
+
+Ether(src= 'BB:B4:C8:08:92:8E', dst= '32:2F:6B:F6:B0:51') /
+ARP(op=1, psrc='192.168.1.16', pdst='192.168.1.25', hwsrc='CF:62:43:C0:AC:E3', hwdst='FF:FF:FF:FF:FF:FF')
+
+3. ARP Announcement being unicasted
+
+An ARP announcement being made that is unicasted instead of being broadcasted. Attempted cache poison attack.
+
+Ether(src= 'C2:23:5E:C5:DF:6A', dst= 'D2:11:FE:A5:EF:7B') /
+ARP(op=1, psrc='192.168.1.24', pdst='192.168.1.24', hwsrc='C2:23:5E:C5:DF:6A', hwdst='00:00:00:00:00:00')
+
+=====================================================================================================================
+NOTICE SCENARIOS
+=====================================================================================================================
+
+1. An announcement made claiming a certain IP address.
+Ether(src= 'C2:23:5E:C5:DF:6A', dst= 'FF:FF:FF:FF:FF:FF') /
+ARP(op=1, psrc='192.168.1.24', pdst='192.168.1.24', hwsrc='C2:23:5E:C5:DF:6A', hwdst='00:00:00:00:00:00')
+
+Here the device is claiming the ip address 192.168.1.24.
+
+2. An ARP Probe being sent
+Ether(src= 'C2:23:5E:C5:DF:6A', dst= 'FF:FF:FF:FF:FF:FF') /
+ARP(op=1, psrc='0.0.0.0', pdst='192.168.1.11', hwsrc='C2:23:5E:C5:DF:6A', hwdst='00:00:00:00:00:00'),
+
+A device is sending out probe requests to check if anyone responds with an ip conflict for 192.168.1.11
+
+3. Gratuitous ARP being sent
+Ether(src= 'B3:8B:9B:0F:29:8C', dst= 'FF:FF:FF:FF:FF:FF') /
+ARP(op=2, psrc='192.168.1.16', pdst='192.168.1.16', hwsrc='B3:8B:9B:0F:29:8C', hwdst='FF:FF:FF:FF:FF:FF')
+
+A gratuitous arp broadcast is sent for a certain ip address - 192.168.1.16.
+
+=====================================================================================================================
+PERMITTED SCENARIOS
+=====================================================================================================================
+
+1. A normal ARP request being sent.
+Ether(src= '44:15:55:DB:DA:DC', dst= 'FF:FF:FF:FF:FF:FF') /
+ ARP(op=1, psrc='192.168.1.28', pdst='192.168.1.13', hwsrc='44:15:55:DB:DA:DC', hwdst='FF:FF:FF:FF:FF:FF')
+
+2. A normal ARP reply being recieved.
+Ether(src= '78:81:A0:12:81:09', dst= '44:15:55:DB:DA:DC') /
+ARP(op=2, psrc='192.168.1.13', pdst='192.168.1.28', hwsrc='78:81:A0:12:81:09', hwdst='44:15:55:DB:DA:DC')
+
+3. A normal arp request being sent by same device but with different source IPs
+A device could change its ip address over time and the DHCP server would take care of assigning these addresses. Thus
+with dhcp snooping one could permit these scenarios.
+
+
+=====================================================================================================================
+TASK 3
+=====================================================================================================================
+
+For generating the ARP packets in my network, I connected/ disconnected devices on my network. These included a phone,
+a laptop, and a tablet. In addition, ip addresses were also changed manually to simulate network changes over time.
+
+
+A way to identify if certain ARP packets are being discarded/ignored is by sending crafted packets to a certain device.
+Using Scapy or any other similar client, one can inject custom packets into the network and observe the results.
